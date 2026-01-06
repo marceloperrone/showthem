@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor - Audience Segments</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-card: #1a1a1a;
+            --bg-input: #242424;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #fe2c55;
+            --accent-hover: #ff4466;
+            --border: #2a2a2a;
+            --success: #00c853;
+            --warning: #ffab00;
+            --danger: #ff5252;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #00e676;
+        }
+
+        .btn-danger {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-input);
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            transition: all 0.15s ease;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        /* Table */
+        .table-wrapper {
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .cell-id {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .cell-url {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .cell-url a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .cell-url a:hover {
+            text-decoration: underline;
+        }
+
+        .cell-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .group-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(254, 44, 85, 0.15);
+            color: var(--accent);
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-primary);
+            transition: border-color 0.15s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .form-select {
+            cursor: pointer;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .empty-state h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-color: var(--success);
+        }
+
+        .toast.success::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 32px;
+            padding: 16px 24px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Link to viewer */
+        .view-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .view-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Hidden file input */
+        #importInput {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 16px;
+                flex-wrap: wrap;
+                gap: 16px;
+            }
+
+            .main {
+                padding: 16px;
+            }
+
+            .stats-bar {
+                flex-wrap: wrap;
+                gap: 16px;
+            }
+
+            .table-wrapper {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <h1>Segment Editor</h1>
+            <div class="tabs">
+                <button class="tab active" data-tab="groups">Groups</button>
+                <button class="tab" data-tab="videos">Videos</button>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="index.html" class="view-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                View Collection
+            </a>
+            <label class="btn btn-secondary" for="importInput">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                Bulk Import
+            </label>
+            <input type="file" id="importInput" accept=".json">
+            <span class="view-link" id="saveStatus">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                Auto-saved
+            </span>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div>
+                    <div class="stat-value" id="groupCount">0</div>
+                    <div class="stat-label">Segments</div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div>
+                    <div class="stat-value" id="videoCount">0</div>
+                    <div class="stat-label">Videos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Groups Section -->
+        <section class="section active" id="groupsSection">
+            <div class="section-header">
+                <h2>Audience Segments</h2>
+                <button class="btn btn-primary" id="addGroupBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Add Segment
+                </button>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Videos</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="groupsTable">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Videos Section -->
+        <section class="section" id="videosSection">
+            <div class="section-header">
+                <h2>Videos</h2>
+                <button class="btn btn-primary" id="addVideoBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Add Video
+                </button>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Caption</th>
+                            <th>URL</th>
+                            <th>Segment</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="videosTable">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Group Modal -->
+    <div class="modal-overlay" id="groupModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="groupModalTitle">Add Segment</h3>
+                <button class="modal-close" onclick="closeModal('groupModal')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="groupEditId">
+                <div class="form-group">
+                    <label class="form-label">Segment Name *</label>
+                    <input type="text" class="form-input" id="groupName" placeholder="e.g., Gen Z Lifestyle">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ID (auto-generated)</label>
+                    <input type="text" class="form-input" id="groupId" placeholder="gen-z-lifestyle" readonly>
+                    <p class="form-hint">This is automatically created from the name</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="groupDescription" placeholder="Describe this audience segment..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('groupModal')">Cancel</button>
+                <button class="btn btn-primary" id="saveGroupBtn">Save Segment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+    <div class="modal-overlay" id="videoModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="videoModalTitle">Add Video</h3>
+                <button class="modal-close" onclick="closeModal('videoModal')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="videoEditIndex">
+                <div class="form-group">
+                    <label class="form-label">TikTok URL *</label>
+                    <input type="url" class="form-input" id="videoUrl" placeholder="https://www.tiktok.com/@user/video/123">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Username *</label>
+                    <input type="text" class="form-input" id="videoUsername" placeholder="creator_handle">
+                    <p class="form-hint">Without the @ symbol</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Caption</label>
+                    <input type="text" class="form-input" id="videoCaption" placeholder="The video's caption text">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Your Notes</label>
+                    <textarea class="form-textarea" id="videoDescription" placeholder="Why this video is relevant, what makes it interesting..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Segment *</label>
+                    <select class="form-select" id="videoGroup">
+                        <option value="">Select a segment...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('videoModal')">Cancel</button>
+                <button class="btn btn-primary" id="saveVideoBtn">Save Video</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>Confirm Delete</h3>
+                <button class="modal-close" onclick="closeModal('deleteModal')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteMessage">Are you sure you want to delete this item?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Data
+        let data = { groups: [], videos: [] };
+        let deleteCallback = null;
+
+        // DOM Elements
+        const tabs = document.querySelectorAll('.tab');
+        const sections = document.querySelectorAll('.section');
+        const groupsTable = document.getElementById('groupsTable');
+        const videosTable = document.getElementById('videosTable');
+        const groupCountEl = document.getElementById('groupCount');
+        const videoCountEl = document.getElementById('videoCount');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            setupEventListeners();
+            await fetchData();
+        });
+
+        // Fetch data from API
+        async function fetchData() {
+            try {
+                const res = await fetch('/api/data');
+                if (res.ok) {
+                    const jsonData = await res.json();
+                    loadData(jsonData, false);
+                }
+            } catch (err) {
+                console.error('Failed to load data:', err);
+                showToast('Failed to connect to API');
+            }
+        }
+
+        function setupEventListeners() {
+            // Tabs
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    sections.forEach(s => s.classList.remove('active'));
+                    document.getElementById(`${tab.dataset.tab}Section`).classList.add('active');
+                });
+            });
+
+            // Import
+            document.getElementById('importInput').addEventListener('change', handleImport);
+
+            // Add buttons
+            document.getElementById('addGroupBtn').addEventListener('click', () => openGroupModal());
+            document.getElementById('addVideoBtn').addEventListener('click', () => openVideoModal());
+
+            // Save buttons
+            document.getElementById('saveGroupBtn').addEventListener('click', saveGroup);
+            document.getElementById('saveVideoBtn').addEventListener('click', saveVideo);
+
+            // Auto-generate group ID from name
+            document.getElementById('groupName').addEventListener('input', (e) => {
+                const id = e.target.value
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-')
+                    .trim();
+                document.getElementById('groupId').value = id;
+            });
+
+            // Close modals on overlay click
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) {
+                        closeModal(overlay.id);
+                    }
+                });
+            });
+
+            // Escape key closes modals
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal-overlay.active').forEach(m => {
+                        closeModal(m.id);
+                    });
+                }
+            });
+        }
+
+        // Load data
+        function loadData(jsonData, showMessage = true) {
+            data = jsonData;
+            if (!data.groups) data.groups = [];
+            if (!data.videos) data.videos = [];
+            updateStats();
+            renderGroups();
+            renderVideos();
+            if (showMessage) showToast('Data loaded successfully');
+        }
+
+        // Update stats
+        function updateStats() {
+            groupCountEl.textContent = data.groups.length;
+            videoCountEl.textContent = data.videos.length;
+        }
+
+        // Render groups table
+        function renderGroups() {
+            if (data.groups.length === 0) {
+                groupsTable.innerHTML = `
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <h3>No segments yet</h3>
+                                <p>Create your first audience segment to get started</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            groupsTable.innerHTML = data.groups.map(group => {
+                const videoCount = data.videos.filter(v => v.groupId === group.id).length;
+                return `
+                    <tr>
+                        <td class="cell-id">${escapeHtml(group.id)}</td>
+                        <td><strong>${escapeHtml(group.name)}</strong></td>
+                        <td>${escapeHtml(group.description || '-')}</td>
+                        <td>${videoCount}</td>
+                        <td class="cell-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="openGroupModal('${group.id}')">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="confirmDeleteGroup('${group.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Render videos table
+        function renderVideos() {
+            if (data.videos.length === 0) {
+                videosTable.innerHTML = `
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <h3>No videos yet</h3>
+                                <p>Add your first TikTok video to the collection</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            videosTable.innerHTML = data.videos.map((video, index) => {
+                const group = data.groups.find(g => g.id === video.groupId);
+                return `
+                    <tr>
+                        <td>@${escapeHtml(video.username)}</td>
+                        <td>${escapeHtml(video.caption || '-')}</td>
+                        <td class="cell-url"><a href="${escapeHtml(video.url)}" target="_blank">${escapeHtml(video.url)}</a></td>
+                        <td>${group ? `<span class="group-badge">${escapeHtml(group.name)}</span>` : '-'}</td>
+                        <td class="cell-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="openVideoModal(${index})">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="confirmDeleteVideo(${index})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Open group modal
+        function openGroupModal(groupId = null) {
+            const modal = document.getElementById('groupModal');
+            const title = document.getElementById('groupModalTitle');
+            const editIdInput = document.getElementById('groupEditId');
+            const nameInput = document.getElementById('groupName');
+            const idInput = document.getElementById('groupId');
+            const descInput = document.getElementById('groupDescription');
+
+            if (groupId) {
+                const group = data.groups.find(g => g.id === groupId);
+                title.textContent = 'Edit Segment';
+                editIdInput.value = groupId;
+                nameInput.value = group.name;
+                idInput.value = group.id;
+                descInput.value = group.description || '';
+            } else {
+                title.textContent = 'Add Segment';
+                editIdInput.value = '';
+                nameInput.value = '';
+                idInput.value = '';
+                descInput.value = '';
+            }
+
+            modal.classList.add('active');
+            nameInput.focus();
+        }
+
+        // Save group
+        async function saveGroup() {
+            const editId = document.getElementById('groupEditId').value;
+            const name = document.getElementById('groupName').value.trim();
+            const id = document.getElementById('groupId').value.trim();
+            const description = document.getElementById('groupDescription').value.trim();
+
+            if (!name || !id) {
+                alert('Please enter a segment name');
+                return;
+            }
+
+            try {
+                if (editId) {
+                    // Update existing
+                    await fetch(`/api/groups/${encodeURIComponent(editId)}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id, name, description })
+                    });
+                } else {
+                    // Check for duplicate ID
+                    if (data.groups.some(g => g.id === id)) {
+                        alert('A segment with this ID already exists');
+                        return;
+                    }
+                    await fetch('/api/groups', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id, name, description })
+                    });
+                }
+
+                closeModal('groupModal');
+                await fetchData();
+                showToast(editId ? 'Segment updated' : 'Segment added');
+            } catch (err) {
+                console.error('Error saving group:', err);
+                showToast('Failed to save segment');
+            }
+        }
+
+        // Open video modal
+        function openVideoModal(videoIndex = null) {
+            const modal = document.getElementById('videoModal');
+            const title = document.getElementById('videoModalTitle');
+            const editIndexInput = document.getElementById('videoEditIndex');
+            const urlInput = document.getElementById('videoUrl');
+            const usernameInput = document.getElementById('videoUsername');
+            const captionInput = document.getElementById('videoCaption');
+            const descInput = document.getElementById('videoDescription');
+            const groupSelect = document.getElementById('videoGroup');
+
+            // Populate group dropdown
+            groupSelect.innerHTML = '<option value="">Select a segment...</option>' +
+                data.groups.map(g => `<option value="${g.id}">${escapeHtml(g.name)}</option>`).join('');
+
+            if (videoIndex !== null) {
+                const video = data.videos[videoIndex];
+                title.textContent = 'Edit Video';
+                editIndexInput.value = videoIndex;
+                urlInput.value = video.url;
+                usernameInput.value = video.username;
+                captionInput.value = video.caption || '';
+                descInput.value = video.description || '';
+                groupSelect.value = video.groupId;
+            } else {
+                title.textContent = 'Add Video';
+                editIndexInput.value = '';
+                urlInput.value = '';
+                usernameInput.value = '';
+                captionInput.value = '';
+                descInput.value = '';
+                groupSelect.value = '';
+            }
+
+            modal.classList.add('active');
+            urlInput.focus();
+        }
+
+        // Save video
+        async function saveVideo() {
+            const editIndex = document.getElementById('videoEditIndex').value;
+            const url = document.getElementById('videoUrl').value.trim();
+            const username = document.getElementById('videoUsername').value.trim().replace(/^@/, '');
+            const caption = document.getElementById('videoCaption').value.trim();
+            const description = document.getElementById('videoDescription').value.trim();
+            const groupId = document.getElementById('videoGroup').value;
+
+            if (!url || !username || !groupId) {
+                alert('Please fill in URL, username, and select a segment');
+                return;
+            }
+
+            const videoData = { groupId, url, username, caption, description };
+
+            try {
+                if (editIndex !== '') {
+                    const videoId = data.videos[parseInt(editIndex)].id;
+                    await fetch(`/api/videos/${encodeURIComponent(videoId)}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(videoData)
+                    });
+                } else {
+                    await fetch('/api/videos', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(videoData)
+                    });
+                }
+
+                closeModal('videoModal');
+                await fetchData();
+                showToast(editIndex !== '' ? 'Video updated' : 'Video added');
+            } catch (err) {
+                console.error('Error saving video:', err);
+                showToast('Failed to save video');
+            }
+        }
+
+        // Delete confirmations
+        function confirmDeleteGroup(groupId) {
+            const group = data.groups.find(g => g.id === groupId);
+            const videoCount = data.videos.filter(v => v.groupId === groupId).length;
+
+            let message = `Are you sure you want to delete "${group.name}"?`;
+            if (videoCount > 0) {
+                message += ` This will also remove ${videoCount} video(s) from this segment.`;
+            }
+
+            document.getElementById('deleteMessage').textContent = message;
+            deleteCallback = async () => {
+                try {
+                    await fetch(`/api/groups/${encodeURIComponent(groupId)}`, { method: 'DELETE' });
+                    await fetchData();
+                    showToast('Segment deleted');
+                } catch (err) {
+                    console.error('Error deleting group:', err);
+                    showToast('Failed to delete segment');
+                }
+            };
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        function confirmDeleteVideo(index) {
+            const video = data.videos[index];
+            document.getElementById('deleteMessage').textContent =
+                `Are you sure you want to delete the video by @${video.username}?`;
+            deleteCallback = async () => {
+                try {
+                    await fetch(`/api/videos/${encodeURIComponent(video.id)}`, { method: 'DELETE' });
+                    await fetchData();
+                    showToast('Video deleted');
+                } catch (err) {
+                    console.error('Error deleting video:', err);
+                    showToast('Failed to delete video');
+                }
+            };
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+            if (deleteCallback) {
+                await deleteCallback();
+                deleteCallback = null;
+            }
+            closeModal('deleteModal');
+        });
+
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Import (bulk upload via API)
+        function handleImport(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    try {
+                        const jsonData = JSON.parse(e.target.result);
+                        await fetch('/api/data', {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(jsonData)
+                        });
+                        await fetchData();
+                        showToast('Data imported successfully');
+                    } catch (err) {
+                        console.error('Import error:', err);
+                        alert('Invalid JSON file or import failed');
+                    }
+                };
+                reader.readAsText(file);
+            }
+            e.target.value = '';
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show', 'success');
+            setTimeout(() => {
+                toast.classList.remove('show', 'success');
+            }, 3000);
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

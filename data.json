@@ -1,0 +1,111 @@
+{
+  "groups": [
+    {
+      "id": "gen-z-lifestyle",
+      "name": "Gen Z Lifestyle",
+      "description": "Young adults sharing daily routines, trends, and authentic moments that define their generation"
+    },
+    {
+      "id": "fitness-wellness",
+      "name": "Fitness & Wellness",
+      "description": "Health-conscious creators sharing workout tips, nutrition advice, and mental wellness content"
+    },
+    {
+      "id": "food-culture",
+      "name": "Food Culture",
+      "description": "Foodies exploring recipes, restaurant reviews, and food trends"
+    },
+    {
+      "id": "tech-early-adopters",
+      "name": "Tech Early Adopters",
+      "description": "Tech enthusiasts reviewing gadgets, apps, and emerging technologies"
+    },
+    {
+      "id": "sustainable-living",
+      "name": "Sustainable Living",
+      "description": "Eco-conscious creators sharing tips on sustainable products and lifestyle choices"
+    }
+  ],
+  "videos": [
+    {
+      "id": "1",
+      "groupId": "gen-z-lifestyle",
+      "url": "https://www.tiktok.com/@example/video/1234567890",
+      "username": "lifewithlex",
+      "caption": "morning routine but make it chaotic",
+      "description": "Authentic morning routine showing relatable moments"
+    },
+    {
+      "id": "2",
+      "groupId": "gen-z-lifestyle",
+      "url": "https://www.tiktok.com/@example/video/1234567891",
+      "username": "vibecheck_daily",
+      "caption": "things that just make sense in 2024",
+      "description": "Trend commentary with high engagement"
+    },
+    {
+      "id": "3",
+      "groupId": "fitness-wellness",
+      "url": "https://www.tiktok.com/@example/video/2234567890",
+      "username": "fitwithjess",
+      "caption": "10 min full body no equipment needed",
+      "description": "Quick workout format popular with busy audience"
+    },
+    {
+      "id": "4",
+      "groupId": "fitness-wellness",
+      "url": "https://www.tiktok.com/@example/video/2234567891",
+      "username": "mindful_mike",
+      "caption": "5 signs you need a mental health day",
+      "description": "Mental wellness content with high saves"
+    },
+    {
+      "id": "5",
+      "groupId": "food-culture",
+      "url": "https://www.tiktok.com/@example/video/3234567890",
+      "username": "tastetest_tina",
+      "caption": "trying every item on the secret menu",
+      "description": "Brand discovery through food exploration"
+    },
+    {
+      "id": "6",
+      "groupId": "food-culture",
+      "url": "https://www.tiktok.com/@example/video/3234567891",
+      "username": "budgeteats",
+      "caption": "feeding myself for $20 a week challenge",
+      "description": "Budget-conscious content resonating with students"
+    },
+    {
+      "id": "7",
+      "groupId": "tech-early-adopters",
+      "url": "https://www.tiktok.com/@example/video/4234567890",
+      "username": "techbro_reviews",
+      "caption": "is this $30 gadget actually worth it?",
+      "description": "Value-focused tech reviews"
+    },
+    {
+      "id": "8",
+      "groupId": "tech-early-adopters",
+      "url": "https://www.tiktok.com/@example/video/4234567891",
+      "username": "appoftheday",
+      "caption": "apps that changed my productivity",
+      "description": "App recommendations with high share rate"
+    },
+    {
+      "id": "9",
+      "groupId": "sustainable-living",
+      "url": "https://www.tiktok.com/@example/video/5234567890",
+      "username": "ecowarrior_em",
+      "caption": "swaps that actually make a difference",
+      "description": "Practical sustainability tips"
+    },
+    {
+      "id": "10",
+      "groupId": "sustainable-living",
+      "url": "https://www.tiktok.com/@example/video/5234567891",
+      "username": "thriftflip_queen",
+      "caption": "turning trash into treasure pt. 47",
+      "description": "Upcycling content with creative angle"
+    }
+  ]
+}
